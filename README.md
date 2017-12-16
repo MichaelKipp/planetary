@@ -1,6 +1,7 @@
 # Planetary
 
 A simple planet simulator.
+https://michaelkipp.github.io/planetary/
 
 ## Getting Started
 
