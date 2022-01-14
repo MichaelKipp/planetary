@@ -1,10 +1,11 @@
 # Planetary
 
 A simple planet simulator.
+https://michaelkipp.github.io/planetary/
 
 ## Getting Started
 
-![planetary](michaelkipp.github.com/planetary/img/planetary.jpg)
+![planetary](img/planetary.png "Image of two particles orbiting a larger particle")
 
 Left-click and drag to "shoot" a planet.
 Right-click and drag to create a stationary planet of variable size.
