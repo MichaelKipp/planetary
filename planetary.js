@@ -9,15 +9,21 @@ var meteors;
 var planetCreation;
 var meteorCreation;
 var GRAVITY;
+var gravitySlider;
 var TRAIL_SIZE;
 var TOP_SPEED;
 var initialClick;
 var dragRadius;
+var paused = false;
+
+var launchedMeteor
+var createdPlanet
+var hasPaused
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   background(255);
-  
+
   planets = [];
   meteors = [];
   planetCreation = 0;
@@ -27,40 +33,66 @@ function setup() {
   TOP_SPEED = 10;
   initialClick = createVector(width/2, height/2);
   dragRadius = 0;
+
+  // gravitySlider = createSlider(0, 100, 5);
+  // gravitySlider.position(20, 20);
 }
 
 function draw() {
-  background(255);
-  noFill();
-  if (planetCreation) {
-    ellipse(initialClick.x, initialClick.y, 2 * dragRadius, 2 * dragRadius);
-  }
-  if (meteorCreation) {
-    stroke(dragRadius, 255 - dragRadius, 10);
-    line(mouseX, mouseY, initialClick.x, initialClick.y);
-    stroke(210, 210, 210);
-    ellipse(initialClick.x, initialClick.y, 200, 200);
-  }
+  if (!paused) {
+    background(255);
+    noFill();
+    // GRAVITY = gravitySlider.value();
+    if (planetCreation) {
+      ellipse(initialClick.x, initialClick.y, 2 * dragRadius, 2 * dragRadius);
+    }
+    if (meteorCreation) {
+      stroke(dragRadius, 255 - dragRadius, 10);
+      line(mouseX, mouseY, initialClick.x, initialClick.y);
+      stroke(210, 210, 210);
+      ellipse(initialClick.x, initialClick.y, 200, 200);
+    }
 
-  for (var i = 0; i < planets.length; i++) {
-    planets[i].display();
-  }
-  for (var i = 0; i < meteors.length; i++) {
-    console.log(i);
-    console.log(meteors);
-    meteors[i].update();
-    meteors[i].checkEdges();
-    meteors[i].display();
+    for (var i = 0; i < planets.length; i++) {
+      planets[i].display();
+    }
+    for (var i = 0; i < meteors.length; i++) {
+      meteors[i].update();
+      meteors[i].checkEdges();
+      meteors[i].display();
+    }
+    push();
+    stroke(0, 0, 0);
+    strokeWeight(2.5);
+    fill(255, .75);
+    textSize(30);
+    if (!launchedMeteor) {
+      text("Click and drag to shoot a meteor", (windowWidth * 1/5), (windowHeight/2));
+    }
+    if (!createdPlanet) {
+      text("Right click and drag to create a planet", (windowWidth * 1/5), (windowHeight/2) + 30);
+    }
+    if (!hasPaused) {
+      text("Space to pause", (windowWidth * 1/5), (windowHeight/2) + 60);
+    }
+    pop();
   }
 }
 
+function keyPressed() {
+  if (keyCode == 32) {
+    paused = !paused
+    hasPaused = true;
+  }
+  return false;
+}
+
 function mousePressed() {
-  if (mousePressed && (mouseButton == RIGHT)) {
+  if (mousePressed && mouseButton == RIGHT) {
     initialClick = createVector(mouseX, mouseY);
     planetCreation = 1;
   }
-
-  if (mousePressed && (mouseButton == LEFT)) {
+  if (mousePressed && mouseButton == LEFT) {
     stroke(210, 210, 210);
     noFill();
     ellipse(initialClick.x, initialClick.y, 200, 200);
@@ -91,11 +123,13 @@ function mouseReleased() {
     planets.push(new Celestial(createVector(initialClick.x, initialClick.y), dragRadius, createVector(0, 0), createVector(0, 0), 0));
     planetCreation = 0;
     dragRadius = 0;
+    createdPlanet = true;
   }
   if (meteorCreation) {
     meteors.push(new Celestial(createVector(initialClick.x, initialClick.y), 5, createVector(0, 0), createVector(((initialClick.x - mouseX)/width) * 15, ((initialClick.y - mouseY)/height) * 15), TOP_SPEED));
     meteorCreation = 0;
     dragRadius = 0;
+    launchedMeteor = true;
   }
 }
 
